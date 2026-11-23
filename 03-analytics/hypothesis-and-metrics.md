@@ -1,17 +1,28 @@
-# Hypothesis & Success Metrics
+# Hypothesis & Success Metrics (Module 3)
 
-> **Module 3 · ★ Deliverable 3.** Repo file `03-analytics/hypothesis-and-metrics.md` — part of your submission.
-> Do the lab in the **Module 3 · Exercise Guide** (linked from the Module 3 deck), then click **⬇ Download .md** — it saves as this exact file. Commit it here.
-> It feeds the **Problem, Value & Hypothesis** slide of your Module 6 final deck.
+## Pre-work · Hypothesis check
+- **Role , who you are solving for (from M2):** Diego, a delivery driver with three years of experience on the platform who completes dozens of stops daily
+- **Goal , what this user is ultimately trying to achieve:** Mark each delivery as completed quickly and move on to the next stop
+- **Friction / moment of misery , the specific pain blocking their goal:** Marking a delivery requires navigating three screens, which is difficult when Diego is outdoors holding a package, so he texts his dispatcher instead
+- **Current workaround , the external tool or manual process they rely on (M2):** Text messaging to communicate delivery completion to the dispatcher instead of using RouteLogic
+- **Problem Hook , your one-sentence framing of the business crisis (M1):** RouteLogic's complexity is slowing down daily operations, frustrating users, and driving valuable enterprise customers toward competitors
+- **Value Proposition , the outcome your initiative promised to deliver (M1):** Velocity will simplify workflows, reduce administrative tasks, and enable coordinators to complete their work faster, helping RouteLogic improve customer satisfaction and retention before more customers switch to competitors
 
-## Finalized product hypothesis
+## Read your data snapshots
+- **Does the funnel data confirm your M2 friction point, or does it tell a different story? Note where the numbers align with the qualitative pain you found and where they diverge.:** _(not filled in)_
+- **Do the retention patterns align with the workaround your M2 persona used to find content? Note what the Mo. 0→1 drop suggests about the onboarding experience your persona described as frustrating.:** _(not filled in)_
+- **Does the LTV gap and the content mix (61% trending for Wanderers) confirm the moment of misery your persona described? Note which segment your persona is in and whether the data confirms their pain.:** _(not filled in)_
+- **Does the low adoption confirm your persona is burdened by tools they don’t use? Note whether the low scheduling adoption (42%) for coordinators matches your M2 moment of misery.:** No, the data is not enough to confirm this. It shows that drivers mainly use three core features, but it does not prove that unused features cause Diego's frustration. The 42% scheduling adoption among coordinators is not directly related to Diego's delivery completion problem.
+- **Does the workflow data match the manual process or hack you documented in M2? Note whether the specific drop-offs or time gaps explain why your persona avoids the digital tool.:** No, the data does not directly match Diego's texting workaround. However, it reveals a bigger measurable problem for coordinators: only 31% reach shift handoff, and compliance checks take 14.6 minutes instead of 3 minutes. This suggests we may need to shift our focus to coordinators.
+- **Look at the CSAT heatmap. Which specific cell most directly maps to your persona’s friction? Note how the NPS trend justifies the urgency of your M1 Problem Hook.:** The Coordinator–Compliance CSAT score of 2.2/5 is the strongest match for the emerging workflow problem. Compliance checks take 14.6 minutes versus a 3-minute benchmark. Coordinator NPS dropped from +18 to -12, showing worsening satisfaction and supporting the urgency of simplifying daily operations.
 
-> Based on [qual + quant evidence], I believe that [solving X] for [persona] will result in [outcome], as measured by a [X%] change in [success metric]. I will protect [guardrail metric] and make a go/no-go decision after [decision window].
-
-## Success metrics
-
-| Metric | Type | Target | Why it matters |
-|---|---|---|---|
-| _North-star_ | | _____ | _____ |
-| _Leading indicator_ | | _____ | _____ |
-| _Guardrail_ | | _____ | _____ |
+## Step 3 · Craft your hypothesis
+- **Qualitative evidence (from M2) , quote the specific friction / moment of misery for your persona:** Module 2 research showed that coordinators rely on manual workarounds, including spreadsheets and messaging, because of complex workflows. However, the interviews did not directly identify compliance checks as the main problem
+- **Quantitative evidence (from M3) , name the metric or data point that confirms the pain; cite the number:** Compliance checks take 14.6 minutes compared to a 3-minute benchmark. Only 31% of coordinators reach shift handoff, and their compliance satisfaction score is 2.2/5.
+- **Persona , role, goal, and the friction you confirmed in the reconciliation steps:** Frontline coordinators responsible for managing daily dispatch operations. Their goal is to complete daily workflows accurately and efficiently, but time-consuming compliance checks slow them down and make it difficult to finish their tasks.
+- **Problem you are solving , one sentence describing the specific friction this initiative removes:** Frontline coordinators struggle to complete their daily workflows efficiently because compliance checks are time-consuming, creating delays and reducing workflow completion.
+- **Strategic outcome , what behaviour change do you expect, and how does it map to retention / revenue / churn?:** Improve daily workflow completion and reduce manual work for frontline coordinators, leading to higher user satisfaction and helping RouteLogic retain enterprise customers.
+- **Primary success metric (initiative signal) , the leading indicator that tells you the gap is closing:** Reduce average compliance check time from 14.6 minutes to 8 minutes per workflow.
+- **Guardrail metric (product signal) , the metric that must NOT drop; it protects your existing base:** Maintain compliance accuracy and ensure the compliance error rate does not increase.
+- **Decision window , how much time or data before you scale, pivot, or kill? minimum threshold to proceed?:** Evaluate results after a 4-week pilot, comparing compliance check time and error rates against the baseline.
+- **Draft your full hypothesis sentence , one to three sentences; quote the metric, name the persona, name the outcome:** Based on qualitative evidence of complex workflows and quantitative data showing that compliance checks take 14.6 minutes versus a 3-minute benchmark, we believe that simplifying compliance checks for frontline coordinators will improve daily workflow efficiency and completion, as measured by a 45% reduction in average compliance check time, from 14.6 to 8 minutes. We will ensure the compliance error rate does not increase and evaluate the results after a 4-week pilot.
