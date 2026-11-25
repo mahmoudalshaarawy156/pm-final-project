@@ -1,23 +1,43 @@
-# Roadmap, PRD & Prototype
+# Feature Roadmap, Module 4 · RouteLogic Velocity
 
-> **Module 4 · ★ Deliverable 4.** Repo file `04-roadmap/roadmap-prd-prototype.md` — part of your submission.
-> Do the lab in the **Module 4 · Exercise 1 Guide** (linked from the Module 4 deck), then click **⬇ Download .md** — it saves as this exact file. Commit it here.
-> It becomes the **Roadmap, PRD & Prototype** slide of your Module 6 final deck. (Your Module 4 · Exercise 2 PRD sprint lands in `prd-and-prototype.md`.)
+**Team:** 2 engineers + 1 designer + 1 CS lead
 
-## High-level product roadmap
+## Strategic anchors
+- **Persona:** Frontline coordinators responsible for managing daily dispatch operations.
+- **Primary metric:** A 45% reduction in average compliance check time, from 14.6 minutes to 8 minutes.
+- **Moment of misery:** Time-consuming compliance checks slow down daily operations and make workflow completion difficult.
+- **Guardrail:** Compliance accuracy, with no increase in the compliance error rate.
 
-_Future direction, key milestones, and phased execution over time._
+## Scoring
+| Feature | Value | Effort | Quadrant | Decision | Rationale |
+|---|---|---|---|---|---|
+| B1 One-Click Compliance Checklist | 5 | 3 | Major Project | Now | Directly targets compliance check time; pilot a limited version first. |
+| B2 Smart Daily Report Auto-Fill | 2 | 4 | Time Sinker | Later | Reduces reporting time but does not directly improve compliance checks. |
+| B3 Shift Handoff Wizard | 2 | 3 | Time Sinker | Later | Addresses the 6.8-minute handoff gap but not the primary metric. |
+| B4 Mobile-First Coordinator Dashboard | 2 | 5 | Time Sinker | Cut | Large development effort with limited direct compliance impact. |
+| B5 Step Progress Indicator | 1 | 2 | Fill-In | Later | Improves workflow visibility but offers limited time savings. |
+| B6 Driver Alert Notifications | 1 | 3 | Time Sinker | Cut | Helps drivers but does not directly reduce coordinator compliance time. |
+| B7 Contextual AI ETA Display | 1 | 3 | Time Sinker | Cut | Low adoption and no direct impact on compliance check time. |
+| B8 Fleet Analytics Manager View | 1 | 4 | Time Sinker | Cut | Serves managers rather than the target coordinator persona. |
+| B9 Compliance Audit Trail Export | 1 | 2 | Fill-In | Later | Useful for audits but not for reducing daily compliance time. |
+| B10 In-App Coordinator Training | 1 | 3 | Time Sinker | Cut | Supports training but does not simplify the compliance process itself. |
 
-_____
+## Roadmap
+### NOW, Pilot (4 weeks, 3 accounts)
+- **B1 One-Click Compliance Checklist**, Directly targets compliance check time; pilot a limited version first.
 
-## PRD snippets
+### NEXT, GA Release (weeks 5-8)
+- _(none)_
 
-_The key elements of your simplified PRD._
+### LATER, backlog
+- **B2 Smart Daily Report Auto-Fill**, Reduces reporting time but does not directly improve compliance checks.
+- **B3 Shift Handoff Wizard**, Addresses the 6.8-minute handoff gap but not the primary metric.
+- **B5 Step Progress Indicator**, Improves workflow visibility but offers limited time savings.
+- **B9 Compliance Audit Trail Export**, Useful for audits but not for reducing daily compliance time.
 
-_____
-
-## Wireframes / prototype
-
-_A visual or interactive model of your proposed solution._
-
-_[screenshot or link to your prototype]_
+### ✂ Cut List
+- **B4 Mobile-First Coordinator Dashboard**, Large development effort with limited direct compliance impact.
+- **B6 Driver Alert Notifications**, Helps drivers but does not directly reduce coordinator compliance time.
+- **B7 Contextual AI ETA Display**, Low adoption and no direct impact on compliance check time.
+- **B8 Fleet Analytics Manager View**, Serves managers rather than the target coordinator persona.
+- **B10 In-App Coordinator Training**, Supports training but does not simplify the compliance process itself.

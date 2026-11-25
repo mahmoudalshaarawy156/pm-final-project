@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RouteLogic Velocity Roadmap</title>
+<style>
+  :root{
+    --bg:#f5f7fa; --surface:#ffffff; --text:#14202e; --muted:#5b6b7e; --border:#dde3ea;
+    --brand:#0b5fff; --brand-dark:#0a2540;
+    --qw:#0f9d58; --qw-bg:#e3f6ec;
+    --mp:#0b5fff; --mp-bg:#e4edff;
+    --fi:#b7791f; --fi-bg:#fdf1d9;
+    --ts:#c53030; --ts-bg:#fde8e8;
+    --shadow:0 1px 2px rgba(10,37,64,.06),0 4px 12px rgba(10,37,64,.05);
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#0d141c; --surface:#16202b; --text:#e8eef5; --muted:#92a2b5; --border:#263444;
+      --brand:#5b94ff; --brand-dark:#0a1624;
+      --qw:#4cd08a; --qw-bg:#12301f;
+      --mp:#6ea2ff; --mp-bg:#14284d;
+      --fi:#f0b95a; --fi-bg:#3a2d12;
+      --ts:#ff8585; --ts-bg:#3d1a1a;
+      --shadow:none;
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  header{background:var(--brand-dark);color:#fff;padding:28px 24px 24px}
+  .wrap{max-width:1200px;margin:0 auto}
+  .brandline{display:flex;align-items:center;gap:10px;font-size:13px;letter-spacing:.08em;text-transform:uppercase;opacity:.85}
+  .logo{width:26px;height:26px;border-radius:7px;background:linear-gradient(135deg,#0b5fff,#37c8ff);display:grid;place-items:center;font-weight:700;font-size:14px}
+  h1{margin:10px 0 6px;font-size:28px;line-height:1.2}
+  .sub{opacity:.85;font-size:14px;max-width:760px}
+  .meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+  .chip{background:rgba(255,255,255,.12);border-radius:999px;padding:5px 12px;font-size:12.5px}
+  main{padding:24px}
+  .anchors{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:22px}
+  .anchor{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow)}
+  .anchor .k{font-size:11.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+  .anchor .v{font-size:15px;font-weight:600;margin-top:4px}
+  .toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:18px}
+  .toolbar input{flex:1 1 220px;min-width:180px;padding:9px 12px;border-radius:9px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:14px}
+  .filters{display:flex;flex-wrap:wrap;gap:6px}
+  .fbtn{border:1px solid var(--border);background:var(--surface);color:var(--text);padding:7px 12px;border-radius:999px;font-size:13px;cursor:pointer}
+  .fbtn[aria-pressed="true"]{background:var(--brand);border-color:var(--brand);color:#fff}
+  .board{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:start}
+  .lane{background:rgba(127,140,160,.08);border:1px solid var(--border);border-radius:14px;padding:14px}
+  .lane-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+  .lane-title{font-weight:700;font-size:15px;letter-spacing:.06em}
+  .lane-sub{font-size:12.5px;color:var(--muted);margin-top:2px}
+  .count{background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:2px 10px;font-size:12px;color:var(--muted)}
+  .lane.now{border-top:4px solid var(--brand)}
+  .lane.next{border-top:4px solid #7c5cff}
+  .lane.later{border-top:4px solid #8a97a8}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px;box-shadow:var(--shadow);cursor:pointer;transition:transform .12s,border-color .12s}
+  .card:hover{transform:translateY(-1px);border-color:var(--brand)}
+  .card:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+  .card-top{display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap}
+  .fid{font-weight:700;font-size:12px;color:var(--muted);background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:1px 7px}
+  .badge{font-size:11.5px;font-weight:600;border-radius:999px;padding:2px 10px}
+  .b-qw{color:var(--qw);background:var(--qw-bg)} .b-mp{color:var(--mp);background:var(--mp-bg)}
+  .b-fi{color:var(--fi);background:var(--fi-bg)} .b-ts{color:var(--ts);background:var(--ts-bg)}
+  .card h3{margin:0 0 6px;font-size:15.5px;line-height:1.3}
+  .card p{margin:0;font-size:13.5px;color:var(--muted)}
+  .detail{display:none;margin-top:12px;padding-top:12px;border-top:1px dashed var(--border)}
+  .card.open .detail{display:block}
+  .scores{display:flex;gap:16px;flex-wrap:wrap}
+  .score{font-size:12px;color:var(--muted)}
+  .meter{display:flex;gap:3px;margin-top:4px}
+  .meter i{width:18px;height:6px;border-radius:3px;background:var(--border)}
+  .meter i.on{background:var(--brand)}
+  .meter.effort i.on{background:#7c5cff}
+  .flag{margin-top:10px;font-size:12.5px;background:var(--fi-bg);color:var(--fi);border-radius:8px;padding:7px 10px}
+  .empty{border:2px dashed var(--border);border-radius:12px;padding:22px 14px;text-align:center;color:var(--muted);font-size:13.5px}
+  .empty b{display:block;color:var(--text);margin-bottom:4px}
+  .cut{margin-top:32px}
+  .cut h2{font-size:18px;margin:0 0 4px}
+  .cut .lede{color:var(--muted);font-size:13.5px;margin:0 0 14px}
+  .cutgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px}
+  .cutcard{background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--ts);border-radius:10px;padding:12px 14px;opacity:.95}
+  .cutcard h3{margin:6px 0 4px;font-size:14.5px;text-decoration:line-through;text-decoration-color:var(--ts)}
+  .cutcard p{margin:0;font-size:13px;color:var(--muted)}
+  .legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px;font-size:12.5px;color:var(--muted);align-items:center}
+  footer{padding:8px 24px 36px;color:var(--muted);font-size:12.5px;text-align:center}
+  .hidden{display:none!important}
+  @media(max-width:900px){.board{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="brandline"><span class="logo">R</span> RouteLogic Velocity</div>
+    <h1>Velocity Initiative Roadmap</h1>
+    <div class="sub">Cut average compliance check time by 45% (14.6 → 8 min) for frontline dispatch coordinators, with no increase in the compliance error rate.</div>
+    <div class="meta">
+      <span class="chip">Team: 2 engineers + 1 designer + 1 CS lead</span>
+      <span class="chip">Pilot: 4 weeks · 3 enterprise accounts</span>
+      <span class="chip">Framework: Effort vs. Value</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="anchors" aria-label="Strategic anchors">
+    <div class="anchor"><div class="k">Persona</div><div class="v">Frontline dispatch coordinators</div></div>
+    <div class="anchor"><div class="k">Primary metric</div><div class="v">Compliance check 14.6 → 8 min</div></div>
+    <div class="anchor"><div class="k">Moment of misery</div><div class="v">Slow compliance checks stall the day</div></div>
+    <div class="anchor"><div class="k">Guardrail</div><div class="v">Compliance error rate: no increase</div></div>
+  </section>
+
+  <div class="toolbar">
+    <input id="search" type="search" placeholder="Search features or rationale…" aria-label="Search features">
+    <div class="filters" id="filters" role="group" aria-label="Filter by quadrant">
+      <button class="fbtn" data-q="all" aria-pressed="true">All</button>
+      <button class="fbtn" data-q="Quick Win" aria-pressed="false">Quick Win</button>
+      <button class="fbtn" data-q="Major Project" aria-pressed="false">Major Project</button>
+      <button class="fbtn" data-q="Fill-In" aria-pressed="false">Fill-In</button>
+      <button class="fbtn" data-q="Time Sinker" aria-pressed="false">Time Sinker</button>
+    </div>
+  </div>
+
+  <section class="board" id="board" aria-label="Roadmap lanes"></section>
+
+  <section class="cut" aria-label="Cut list">
+    <h2>Cut List</h2>
+    <p class="lede">Not in Velocity. Revisit only if the primary metric is hit or the persona changes.</p>
+    <div class="cutgrid" id="cutgrid"></div>
+  </section>
+
+  <div class="legend">
+    <strong>Quadrant key:</strong>
+    <span class="badge b-qw">Quick Win</span> high value, low effort
+    <span class="badge b-mp">Major Project</span> high value, high effort
+    <span class="badge b-fi">Fill-In</span> low value, low effort
+    <span class="badge b-ts">Time Sinker</span> low value, high effort
+  </div>
+</main>
+
+<footer>RouteLogic Velocity · Click any card for Value and Effort scores · Effort scores marked ⚠ need technical validation</footer>
+
+<script>
+const features = [
+  {id:"B1", name:"One-Click Compliance Checklist", lane:"now", value:5, effort:3, quadrant:"Major Project", validate:true,
+   why:"Directly targets compliance check time; pilot a limited version first."},
+  {id:"B2", name:"Smart Daily Report Auto-Fill", lane:"later", value:2, effort:4, quadrant:"Time Sinker", validate:true,
+   why:"Reduces reporting time but does not directly improve compliance checks."},
+  {id:"B3", name:"Shift Handoff Wizard", lane:"later", value:2, effort:3, quadrant:"Time Sinker", validate:false,
+   why:"Addresses the 6.8-minute handoff gap but not the primary metric."},
+  {id:"B5", name:"Step Progress Indicator", lane:"later", value:1, effort:2, quadrant:"Fill-In", validate:false,
+   why:"Improves workflow visibility but offers limited time savings."},
+  {id:"B9", name:"Compliance Audit Trail Export", lane:"later", value:1, effort:2, quadrant:"Fill-In", validate:true,
+   why:"Useful for audits but not for reducing daily compliance time."},
+  {id:"B4", name:"Mobile-First Coordinator Dashboard", lane:"cut", value:2, effort:5, quadrant:"Time Sinker", validate:true,
+   why:"Large development effort with limited direct compliance impact."},
+  {id:"B6", name:"Driver Alert Notifications", lane:"cut", value:1, effort:3, quadrant:"Time Sinker", validate:true,
+   why:"Helps drivers but does not directly reduce coordinator compliance time."},
+  {id:"B7", name:"Contextual AI ETA Display", lane:"cut", value:1, effort:3, quadrant:"Time Sinker", validate:true,
+   why:"Low adoption and no direct impact on compliance check time."},
+  {id:"B8", name:"Fleet Analytics Manager View", lane:"cut", value:1, effort:4, quadrant:"Time Sinker", validate:true,
+   why:"Serves managers rather than the target coordinator persona."},
+  {id:"B10", name:"In-App Coordinator Training", lane:"cut", value:1, effort:3, quadrant:"Time Sinker", validate:false,
+   why:"Supports training but does not simplify the compliance process itself."}
+];
+
+const lanes = [
+  {key:"now",  title:"NOW",  sub:"Pilot · 4 weeks · 3 accounts", empty:["Nothing else in the pilot.","Capacity is reserved for B1 and the error-rate baseline."]},
+  {key:"next", title:"NEXT", sub:"GA Release · weeks 5-8",       empty:["No features committed.","Scope depends on B1 pilot results."]},
+  {key:"later",title:"LATER",sub:"Backlog",                      empty:["Backlog is empty.",""]}
+];
+
+const badgeClass = {"Quick Win":"b-qw","Major Project":"b-mp","Fill-In":"b-fi","Time Sinker":"b-ts"};
+let activeQuadrant = "all", query = "";
+
+const esc = s => s.replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const meter = (n, cls) => `<div class="meter ${cls}">` + [1,2,3,4,5].map(i => `<i class="${i<=n?"on":""}"></i>`).join("") + `</div>`;
+
+function cardHTML(f){
+  return `<article class="card" tabindex="0" role="button" aria-expanded="false" data-id="${f.id}">
+    <div class="card-top"><span class="fid">${f.id}</span><span class="badge ${badgeClass[f.quadrant]}">${f.quadrant}</span></div>
+    <h3>${esc(f.name)}</h3>
+    <p>${esc(f.why)}</p>
+    <div class="detail">
+      <div class="scores">
+        <div class="score">Value ${f.value}/5${meter(f.value,"value")}</div>
+        <div class="score">Effort ${f.effort}/5${f.validate?" ⚠":""}${meter(f.effort,"effort")}</div>
+      </div>
+      ${f.validate ? `<div class="flag">⚠ Effort estimate needs technical validation before commitment.</div>` : ""}
+    </div>
+  </article>`;
+}
+
+function matches(f){
+  const q = query.trim().toLowerCase();
+  const okQ = activeQuadrant === "all" || f.quadrant === activeQuadrant;
+  const okS = !q || (f.id + " " + f.name + " " + f.why).toLowerCase().includes(q);
+  return okQ && okS;
+}
+
+function render(){
+  const board = document.getElementById("board");
+  board.innerHTML = lanes.map(l => {
+    const items = features.filter(f => f.lane === l.key && matches(f));
+    const total = features.filter(f => f.lane === l.key).length;
+    const body = items.length ? items.map(cardHTML).join("")
+      : `<div class="empty"><b>${total ? "No matches" : l.empty[0]}</b>${total ? "Adjust the filter or search." : l.empty[1]}</div>`;
+    return `<div class="lane ${l.key}">
+      <div class="lane-head"><div><div class="lane-title">${l.title}</div><div class="lane-sub">${l.sub}</div></div><span class="count">${items.length}</span></div>
+      ${body}</div>`;
+  }).join("");
+
+  const cuts = features.filter(f => f.lane === "cut" && matches(f));
+  document.getElementById("cutgrid").innerHTML = cuts.length ? cuts.map(f => `
+    <div class="cutcard"><span class="fid">${f.id}</span> <span class="badge ${badgeClass[f.quadrant]}">${f.quadrant}</span>
+    <h3>${esc(f.name)}</h3><p>${esc(f.why)}</p></div>`).join("")
+    : `<div class="empty" style="grid-column:1/-1"><b>No matches</b>Adjust the filter or search.</div>`;
+}
+
+document.getElementById("board").addEventListener("click", e => {
+  const c = e.target.closest(".card"); if(!c) return;
+  const open = c.classList.toggle("open"); c.setAttribute("aria-expanded", open);
+});
+document.getElementById("board").addEventListener("keydown", e => {
+  if((e.key === "Enter" || e.key === " ") && e.target.classList.contains("card")){ e.preventDefault(); e.target.click(); }
+});
+document.getElementById("filters").addEventListener("click", e => {
+  const b = e.target.closest(".fbtn"); if(!b) return;
+  activeQuadrant = b.dataset.q;
+  document.querySelectorAll(".fbtn").forEach(x => x.setAttribute("aria-pressed", x === b));
+  render();
+});
+document.getElementById("search").addEventListener("input", e => { query = e.target.value; render(); });
+
+render();
+</script>
+</body>
+</html>
