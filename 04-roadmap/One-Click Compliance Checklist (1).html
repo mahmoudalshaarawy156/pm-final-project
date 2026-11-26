@@ -1,0 +1,586 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>One-Click Compliance Checklist</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: single centered column, top bar, then one of three screens (dashboard, checklist, confirmation). */
+:root {
+  --bg: #F3F5F6; --surface: #FFFFFF; --fg: #13202A; --muted: #566573; --line: #D6DDE2;
+  --accent: #0E6B66; --accent-ink: #FFFFFF; --accent-soft: #DDEFEC;
+  --warn: #7A4F00; --warn-soft: #FBEFD2; --bad: #B3261E; --bad-soft: #FBE3E1;
+  --good: #1B6E3B; --good-soft: #DDF1E4; --focus: #1B5FD0;
+  --font-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0F171C; --surface: #18232A; --fg: #E6EDF1; --muted: #9AAAB5; --line: #2C3B45;
+    --accent: #4FC3BA; --accent-ink: #06211F; --accent-soft: #17383A;
+    --warn: #F0C26A; --warn-soft: #3A2F14; --bad: #FF8F86; --bad-soft: #40201E;
+    --good: #7FD6A0; --good-soft: #173324; --focus: #7AA7FF; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0F171C; --surface: #18232A; --fg: #E6EDF1; --muted: #9AAAB5; --line: #2C3B45;
+  --accent: #4FC3BA; --accent-ink: #06211F; --accent-soft: #17383A;
+  --warn: #F0C26A; --warn-soft: #3A2F14; --bad: #FF8F86; --bad-soft: #40201E;
+  --good: #7FD6A0; --good-soft: #173324; --focus: #7AA7FF; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 15px; line-height: 1.5;
+  padding-block: 0 48px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 980px; margin: 0 auto; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+button { font: inherit; }
+
+.topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 18px 0; border-bottom: 1px solid var(--line); margin-bottom: 24px; }
+.brand { font-family: var(--font-mono); font-weight: 500; font-size: 15px; letter-spacing: .02em; }
+.brand span { color: var(--muted); font-weight: 400; }
+.proto { font-size: 12px; color: var(--muted); border: 1px dashed var(--line); padding: 3px 9px; border-radius: 4px; }
+
+h1 { font-size: 26px; line-height: 1.2; margin: 0 0 4px; font-weight: 600; text-wrap: balance; }
+h2 { font-size: 16px; margin: 0 0 12px; font-weight: 600; }
+.sub { color: var(--muted); margin: 0 0 24px; max-width: 65ch; }
+.mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+
+.btn { border: 1px solid var(--line); background: var(--surface); color: var(--fg); padding: 9px 16px; border-radius: 6px; cursor: pointer; font-weight: 500; }
+.btn:hover { border-color: var(--muted); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn.primary:hover { filter: brightness(1.08); }
+.btn[disabled] { opacity: .6; cursor: progress; }
+.btn.small { padding: 6px 12px; font-size: 14px; }
+.link { background: none; border: 0; color: var(--accent); cursor: pointer; padding: 0; text-decoration: underline; font: inherit; }
+
+/* Dashboard */
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 18px; margin-bottom: 20px; }
+.metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; }
+.metric .k { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+.metric .v { font-family: var(--font-mono); font-size: 22px; font-weight: 500; font-variant-numeric: tabular-nums; }
+.metric .n { font-size: 12px; color: var(--muted); }
+.scale { position: relative; height: 10px; background: var(--bg); border: 1px solid var(--line); border-radius: 5px; margin: 34px 0 30px; }
+.scale .fill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--accent); border-radius: 4px; }
+.tick { position: absolute; top: -6px; bottom: -6px; width: 2px; background: var(--muted); }
+.tick label { position: absolute; top: 24px; left: 50%; transform: translateX(-50%); font-size: 11px; color: var(--muted); white-space: nowrap; }
+.tick.top label { top: -22px; }
+
+.rows { display: grid; gap: 10px; }
+.row { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) auto auto; gap: 16px; align-items: center; padding: 14px 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; }
+.row .rt { font-weight: 600; }
+.row .meta { color: var(--muted); font-size: 13px; }
+.chip-status { font-size: 12px; font-weight: 500; padding: 3px 9px; border-radius: 999px; background: var(--bg); border: 1px solid var(--line); white-space: nowrap; }
+.chip-status.draft { background: var(--warn-soft); color: var(--warn); border-color: transparent; }
+.chip-status.done { background: var(--good-soft); color: var(--good); border-color: transparent; }
+.chip-status.bad { background: var(--bad-soft); color: var(--bad); border-color: transparent; }
+.simnote { border: 1px dashed var(--warn); background: var(--warn-soft); color: var(--warn); border-radius: 6px; padding: 8px 12px; font-size: 13px; margin-bottom: 20px; }
+.simtag { font-size: 11px; font-weight: 500; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); border: 1px dashed var(--line); border-radius: 4px; padding: 1px 6px; white-space: nowrap; }
+.banner.flag { background: var(--bad-soft); color: var(--bad); border: 1px solid var(--bad); }
+.pill { display: inline-block; font-size: 13px; font-weight: 600; padding: 4px 12px; border-radius: 999px; }
+.pill.good { background: var(--good-soft); color: var(--good); }
+.pill.bad { background: var(--bad-soft); color: var(--bad); }
+.ok .mark.bad { background: var(--bad-soft); color: var(--bad); }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); }
+th { font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); font-weight: 500; }
+.scroll-x { overflow-x: auto; }
+
+/* Checklist */
+.sticky { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); padding: 10px 0; border-bottom: 1px solid var(--line); margin-bottom: 18px; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.statusbar { display: flex; flex-wrap: wrap; gap: 8px 20px; align-items: center; justify-content: space-between; }
+.progress { flex: 1 1 200px; min-width: 0; }
+.bar { height: 8px; background: var(--surface); border: 1px solid var(--line); border-radius: 4px; overflow: hidden; margin-top: 4px; }
+.bar > div { height: 100%; background: var(--accent); transition: width .2s; }
+.timer { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 18px; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px; font-size: 12px; color: var(--muted); margin-bottom: 14px; align-items: center; }
+
+.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 20px; border: 0; padding: 0; margin: 0; min-width: 0; }
+.field { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; min-width: 0; }
+.field.pre { border-left: 4px solid var(--accent); }
+.field.edited { border-left: 4px solid var(--warn); }
+.field.verify { border-left: 4px solid var(--warn); }
+.field.missing { border-left: 4px dashed var(--bad); }
+.field.err { border-color: var(--bad); }
+.flabel { font-weight: 500; font-size: 14px; display: block; }
+.fhead { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap; margin-bottom: 6px; }
+.badge { font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+.badge.prefilled { background: var(--accent-soft); color: var(--accent); }
+.badge.edited, .badge.verify { background: var(--warn-soft); color: var(--warn); }
+.badge.entered { background: var(--good-soft); color: var(--good); }
+.badge.missing { background: var(--bad-soft); color: var(--bad); }
+.input { width: 100%; font: inherit; color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 9px 10px; min-width: 0; }
+.input.invalid { border-color: var(--bad); }
+.unitwrap { display: flex; align-items: center; gap: 8px; }
+.unit { color: var(--muted); font-size: 13px; }
+.hint { font-size: 12px; color: var(--muted); margin-top: 4px; }
+.errmsg { color: var(--bad); font-size: 13px; margin-top: 4px; font-weight: 500; }
+.choice { display: flex; gap: 8px; }
+.chip { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); border-radius: 6px; padding: 8px 16px; cursor: pointer; background: var(--bg); }
+.chip.on { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); font-weight: 500; }
+.chip input { accent-color: var(--accent); }
+.checkrow { display: flex; gap: 10px; align-items: flex-start; cursor: pointer; font-size: 14px; }
+.checkrow input { margin-top: 3px; width: 16px; height: 16px; accent-color: var(--accent); }
+.full { grid-column: 1 / -1; }
+
+.banner { border-radius: 8px; padding: 12px 14px; margin-bottom: 16px; font-size: 14px; }
+.banner.bad { background: var(--bad-soft); color: var(--bad); border: 1px solid var(--bad); }
+.banner ul { margin: 6px 0 0; padding-left: 18px; }
+.banner.info { background: var(--accent-soft); color: var(--fg); border: 1px solid var(--line); }
+.actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; margin-top: 20px; }
+.demo { border: 1px dashed var(--line); border-radius: 6px; padding: 8px 12px; font-size: 13px; color: var(--muted); display: flex; gap: 8px; align-items: center; }
+.saved { font-size: 12px; color: var(--muted); }
+
+/* Confirmation */
+.ok { display: flex; gap: 14px; align-items: center; margin-bottom: 20px; }
+.ok .mark { width: 44px; height: 44px; border-radius: 50%; background: var(--good-soft); color: var(--good); display: grid; place-items: center; font-size: 22px; flex: none; }
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; }
+.fact .k { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+.fact .v { font-family: var(--font-mono); font-size: 20px; font-variant-numeric: tabular-nums; }
+dl.sum { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: 6px 16px; margin: 0; font-size: 14px; }
+dl.sum dt { color: var(--muted); }
+dl.sum dd { margin: 0; overflow-wrap: anywhere; }
+
+@media (max-width: 720px) {
+  .grid { grid-template-columns: minmax(0, 1fr); }
+  .row { grid-template-columns: minmax(0, 1fr) auto; }
+  .row .cov { grid-column: 1 / -1; }
+  dl.sum { grid-template-columns: minmax(0, 1fr); }
+  dl.sum dd { margin-bottom: 8px; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div id="root"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script>
+(function () {
+  var useState = React.useState, useEffect = React.useEffect, useRef = React.useRef;
+  var h = React.createElement;
+
+  function todayStr() {
+    var d = new Date();
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  }
+  var TODAY = todayStr();
+  var BASELINE_MIN = 14.6, TARGET_MIN = 8, SCALE_MAX = 16;
+
+  /* ---------- Mock compliance records (no external data) ---------- */
+  var RECORDS = [
+    { id: 'R-2041', routeName: 'North Loop 12', vehicle: 'TRK-318', driver: 'Maria Delgado',
+      prefill: { route: 'R-2041 North Loop 12', vehicle: 'TRK-318', driver: 'Maria Delgado', licenseVerified: 'yes', inspection: 'yes', odometer: '184220', hoursLogged: '7.5', loadWeight: '18400', insuranceExpiry: '2027-03-31' },
+      uncertain: [] },
+    { id: 'R-2047', routeName: 'Harbor Express', vehicle: 'TRK-224', driver: 'Samir Haddad',
+      prefill: { route: 'R-2047 Harbor Express', vehicle: 'TRK-224', driver: 'Samir Haddad', licenseVerified: 'yes', inspection: 'no', hoursLogged: '9', loadWeight: '21250' },
+      uncertain: [] },
+    { id: 'R-2052', routeName: 'Airport Cargo 7', vehicle: 'TRK-402', driver: 'Lena Fischer',
+      prefill: { route: 'R-2052 Airport Cargo 7', vehicle: 'TRK-402', driver: 'Lena Fischer', licenseVerified: 'yes', odometer: '96310', hoursLogged: '6', loadWeight: '15800', insuranceExpiry: '2026-09-30' },
+      uncertain: ['odometer'] }
+  ];
+
+  /* ---------- Required fields, all shown on one screen ---------- */
+  var FIELDS = [
+    { key: 'route', label: 'Route', type: 'text' },
+    { key: 'vehicle', label: 'Vehicle', type: 'text' },
+    { key: 'driver', label: 'Driver', type: 'text' },
+    { key: 'licenseVerified', label: 'Driver license verified', type: 'choice', hint: 'Simulated rule: answering No flags the checklist as non-compliant.' },
+    { key: 'inspection', label: 'Pre-trip inspection completed', type: 'choice', hint: 'Simulated rule: answering No flags the checklist as non-compliant.' },
+    { key: 'odometer', label: 'Odometer', type: 'number', unit: 'mi', hint: 'Whole miles, greater than 0.' },
+    { key: 'hoursLogged', label: 'Hours of service logged', type: 'number', unit: 'h', step: '0.1', hint: 'Simulated limit: 0 to 14 hours.' },
+    { key: 'loadWeight', label: 'Load weight', type: 'number', unit: 'lb', hint: 'Simulated limit: 1 to 26,000 lb.' },
+    { key: 'insuranceExpiry', label: 'Insurance expiry', type: 'date', hint: 'Simulated rule: must be today or later.' },
+    { key: 'safetyEquip', label: 'Safety equipment on board', type: 'check', checkText: 'I confirmed the fire extinguisher, first-aid kit and warning triangles are on board.' }
+  ];
+
+  function validate(f, v) {
+    var n;
+    switch (f.key) {
+      case 'route': case 'vehicle': case 'driver':
+        return String(v).trim() ? null : 'Enter the ' + f.label.toLowerCase() + '.';
+      case 'licenseVerified': case 'inspection':
+        return v ? null : 'Choose Yes or No.';
+      case 'odometer':
+        if (v === '') return 'Enter the odometer reading.';
+        n = Number(v);
+        return (!isFinite(n) || n <= 0) ? 'Enter a reading greater than 0.' : null;
+      case 'hoursLogged':
+        if (v === '') return 'Enter the hours of service logged.';
+        n = Number(v);
+        return (!isFinite(n) || n < 0 || n > 14) ? 'Enter hours between 0 and 14 (simulated limit).' : null;
+      case 'loadWeight':
+        if (v === '') return 'Enter the load weight.';
+        n = Number(v);
+        return (!isFinite(n) || n < 1 || n > 26000) ? 'Enter a weight between 1 and 26,000 lb (simulated limit).' : null;
+      case 'insuranceExpiry':
+        if (!v) return 'Enter the insurance expiry date.';
+        return v < TODAY ? 'This date has passed. Enter the current policy expiry date.' : null;
+      case 'safetyEquip':
+        return v ? null : 'Confirm the safety equipment is on board.';
+    }
+    return null;
+  }
+
+  function initialValues(rec) {
+    var o = {};
+    FIELDS.forEach(function (f) {
+      var p = rec.prefill[f.key];
+      o[f.key] = p !== undefined ? p : (f.type === 'check' ? false : '');
+    });
+    return o;
+  }
+  function isEmpty(v) { return v === '' || v === false; }
+
+  /* Compliance violations (simulated rules). These are separate from validation errors:
+     validation guards data entry, violations describe the compliance outcome of a submitted check. */
+  function findViolations(values) {
+    var v = [];
+    if (values.licenseVerified === 'no') v.push('Driver license not verified');
+    if (values.inspection === 'no') v.push('Pre-trip inspection incomplete');
+    return v;
+  }
+
+  function fieldStatus(f, value, orig, uncertain) {
+    if (isEmpty(orig)) {
+      if (!isEmpty(value)) return { k: 'entered', t: 'Entered' };
+      return { k: 'missing', t: f.type === 'check' ? 'Needs your confirmation' : 'Missing, enter manually' };
+    }
+    if (value === orig) {
+      return uncertain ? { k: 'verify', t: 'Pre-filled, please verify' } : { k: 'prefilled', t: 'Pre-filled' };
+    }
+    return { k: 'edited', t: 'Edited' };
+  }
+
+  function fmtDur(sec) {
+    sec = Math.max(0, Math.round(sec));
+    return Math.floor(sec / 60) + ':' + String(sec % 60).padStart(2, '0');
+  }
+  function fmtClock(d) {
+    return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  }
+  function prettyValue(f, v) {
+    if (f.type === 'choice') return v === 'yes' ? 'Yes' : v === 'no' ? 'No' : '';
+    if (f.type === 'check') return v ? 'Confirmed' : 'Not confirmed';
+    if (f.unit && v !== '') return Number(v).toLocaleString() + ' ' + f.unit;
+    return String(v);
+  }
+
+  /* Simulated pilot history, for demonstration only */
+  var SEED_LOG = [
+    { id: 'R-2038', sec: 552, errors: 1, violations: 0, simulated: true },
+    { id: 'R-2039', sec: 504, errors: 0, violations: 0, simulated: true },
+    { id: 'R-2040', sec: 474, errors: 2, violations: 1, simulated: true }
+  ];
+
+  /* ---------- Shared UI ---------- */
+  function TopBar(props) {
+    return h('div', { className: 'topbar' },
+      h('div', { className: 'brand' }, 'RouteLogic ', h('span', null, '/ Velocity pilot')),
+      h('div', { className: 'proto' }, props.label));
+  }
+
+  /* ---------- Screen 1: Dashboard ---------- */
+  function Dashboard(props) {
+    var log = props.log;
+    var avgSec = log.length ? log.reduce(function (a, b) { return a + b.sec; }, 0) / log.length : 0;
+    var avgMin = avgSec / 60;
+    var totalErrors = log.reduce(function (a, b) { return a + b.errors; }, 0);
+    Object.keys(props.drafts).forEach(function (k) { totalErrors += props.drafts[k].errorCount; });
+    var totalViolations = log.reduce(function (a, b) { return a + b.violations; }, 0);
+    var nonCompliant = log.filter(function (e) { return e.violations > 0; }).length;
+    var pos = function (m) { return Math.min(100, (m / SCALE_MAX) * 100) + '%'; };
+
+    return h('div', null,
+      h('h1', null, 'Today’s compliance checks'),
+      h('p', { className: 'sub' }, 'Open a route to review pre-filled information, correct anything that is wrong, and submit.'),
+
+      h('div', { className: 'panel' },
+        h('h2', null, 'Pilot measures (simulated)'),
+        h('div', { className: 'metrics' },
+          h('div', { className: 'metric' }, h('div', { className: 'k' }, 'Baseline (simulated)'), h('div', { className: 'v' }, BASELINE_MIN.toFixed(1) + ' min'), h('div', { className: 'n' }, 'Average without the checklist')),
+          h('div', { className: 'metric' }, h('div', { className: 'k' }, 'Target (simulated)'), h('div', { className: 'v' }, TARGET_MIN.toFixed(1) + ' min'), h('div', { className: 'n' }, 'About 45% faster')),
+          h('div', { className: 'metric' }, h('div', { className: 'k' }, 'Pilot average'), h('div', { className: 'v' }, avgMin.toFixed(1) + ' min'), h('div', { className: 'n' }, log.length + ' checks logged')),
+          h('div', { className: 'metric' }, h('div', { className: 'k' }, 'Validation errors'), h('div', { className: 'v' }, String(totalErrors)), h('div', { className: 'n' }, 'Entry problems caught before submission. Submitted checklists passing validation: ' + (log.length ? '100%' : 'none yet'))),
+          h('div', { className: 'metric' }, h('div', { className: 'k' }, 'Compliance violations'), h('div', { className: 'v' }, String(totalViolations)), h('div', { className: 'n' }, nonCompliant + ' of ' + log.length + ' submitted checks flagged non-compliant (simulated rules)'))),
+        h('div', { className: 'scale', role: 'img', 'aria-label': 'Pilot average ' + avgMin.toFixed(1) + ' minutes against target 8 and baseline 14.6 minutes' },
+          h('div', { className: 'fill', style: { width: pos(avgMin) } }),
+          h('div', { className: 'tick top', style: { left: pos(TARGET_MIN) } }, h('label', null, 'Target 8.0')),
+          h('div', { className: 'tick', style: { left: pos(BASELINE_MIN) } }, h('label', null, 'Baseline 14.6'))),
+        h('div', { className: 'hint' }, 'All figures here are simulated or measured in this prototype session only. Validation errors (data-entry problems blocked before submission) are counted separately from compliance violations (outcomes of submitted checks). The timer measures real elapsed time, so a quick click-through will log far less than 8 minutes.')),
+
+      h('div', { className: 'rows' }, RECORDS.map(function (r) {
+        var d = props.drafts[r.id], done = props.done[r.id];
+        var total = FIELDS.length;
+        var pre = FIELDS.filter(function (f) { return !isEmpty(r.prefill[f.key] === undefined ? '' : r.prefill[f.key]); }).length;
+        var status = done ? (done.compliant ? 'Submitted · Compliant' : 'Submitted · Non-compliant') : d ? 'Draft saved' : 'Not started';
+        var cls = done ? (done.compliant ? 'done' : 'bad') : d ? 'draft' : '';
+        return h('div', { className: 'row', key: r.id },
+          h('div', null,
+            h('div', { className: 'rt' }, r.routeName, ' ', h('span', { className: 'mono', style: { color: 'var(--muted)', fontWeight: 400 } }, r.id)),
+            h('div', { className: 'meta' }, r.vehicle + ' · ' + r.driver + ' ', h('span', { className: 'simtag' }, 'Simulated record'))),
+          h('div', { className: 'cov meta' }, pre + ' of ' + total + ' fields pre-filled' + (pre < total ? ' · ' + (total - pre) + ' to complete' : '')),
+          h('span', { className: 'chip-status ' + cls }, status),
+          h('button', { className: 'btn small' + (done ? '' : ' primary'), onClick: function () { done ? props.onViewDone(r.id) : props.onOpen(r.id); } },
+            done ? 'View result' : d ? 'Resume checklist' : 'Open checklist'));
+      })),
+
+      h('div', { className: 'panel', style: { marginTop: 20 } },
+        h('h2', null, 'Pilot log (simulated)'),
+        h('div', { className: 'scroll-x' }, h('table', null,
+          h('thead', null, h('tr', null, ['Route', 'Completion time', 'Validation errors', 'Compliance result', 'Source'].map(function (t) { return h('th', { key: t }, t); }))),
+          h('tbody', null, log.map(function (e, i) {
+            return h('tr', { key: i },
+              h('td', { className: 'mono' }, e.id),
+              h('td', { className: 'mono' }, fmtDur(e.sec)),
+              h('td', { className: 'mono' }, String(e.errors)),
+              h('td', null, e.violations ? 'Non-compliant (' + e.violations + ')' : 'Compliant'),
+              h('td', null, e.simulated ? 'Simulated history' : 'This session'));
+          }))))));
+  }
+
+  /* ---------- Field ---------- */
+  function Field(props) {
+    var f = props.f, value = props.value, error = props.error, st = props.status;
+    var id = 'f-' + f.key, errId = id + '-err', hintId = id + '-hint';
+    var describedBy = [error ? errId : null, f.hint ? hintId : null].filter(Boolean).join(' ') || undefined;
+    var control;
+
+    if (f.type === 'choice') {
+      control = h('div', { className: 'choice', role: 'radiogroup', 'aria-labelledby': id + '-label', 'aria-describedby': describedBy },
+        ['yes', 'no'].map(function (o, i) {
+          return h('label', { key: o, className: 'chip' + (value === o ? ' on' : '') },
+            h('input', { type: 'radio', name: id, id: i === 0 ? id : id + '-no', value: o, checked: value === o, onChange: function () { props.onChange(o); } }),
+            o === 'yes' ? 'Yes' : 'No');
+        }));
+    } else if (f.type === 'check') {
+      control = h('label', { className: 'checkrow' },
+        h('input', { type: 'checkbox', id: id, checked: !!value, 'aria-describedby': describedBy, 'aria-invalid': !!error, onChange: function (e) { props.onChange(e.target.checked); } }),
+        f.checkText);
+    } else {
+      var input = h('input', {
+        id: id, className: 'input' + (error ? ' invalid' : ''), value: value,
+        type: f.type === 'number' ? 'number' : f.type === 'date' ? 'date' : 'text',
+        inputMode: f.type === 'number' ? 'decimal' : undefined, step: f.step,
+        'aria-invalid': !!error, 'aria-describedby': describedBy,
+        onChange: function (e) { props.onChange(e.target.value); }
+      });
+      control = f.unit ? h('div', { className: 'unitwrap' }, input, h('span', { className: 'unit' }, f.unit)) : input;
+    }
+
+    var cls = 'field' + (st.k === 'prefilled' ? ' pre' : st.k === 'edited' ? ' edited' : st.k === 'verify' ? ' verify' : st.k === 'missing' ? ' missing' : '') + (error ? ' err' : '');
+    return h('div', { className: cls + (f.type === 'check' ? ' full' : '') },
+      h('div', { className: 'fhead' },
+        f.type === 'choice' || f.type === 'check'
+          ? h('span', { className: 'flabel', id: id + '-label' }, f.label)
+          : h('label', { className: 'flabel', htmlFor: id, id: id + '-label' }, f.label),
+        h('span', { className: 'badge ' + st.k }, st.t)),
+      control,
+      error ? h('div', { className: 'errmsg', id: errId, role: 'alert' }, error) : null,
+      f.hint ? h('div', { className: 'hint', id: hintId }, f.hint) : null);
+  }
+
+  /* ---------- Screen 2: Compliance Checklist ---------- */
+  function Checklist(props) {
+    var rec = props.record;
+    var orig = useRef(initialValues(rec)).current;
+    var init = props.initial;
+    var _v = useState(init ? init.values : orig), values = _v[0], setValues = _v[1];
+    var _a = useState(false), attempted = _a[0], setAttempted = _a[1];
+    var _e = useState(init ? init.errorCount : 0), errCount = _e[0], setErrCount = _e[1];
+    var _s = useState(false), submitting = _s[0], setSubmitting = _s[1];
+    var _f = useState(null), failMsg = _f[0], setFailMsg = _f[1];
+    var _n = useState(false), failNext = _n[0], setFailNext = _n[1];
+    var _t = useState(0), tick = _t[0], setTick = _t[1];
+    var _sv = useState(init ? init.savedAt : null), savedAt = _sv[0], setSavedAt = _sv[1];
+    var startRef = useRef(Date.now());
+    var base = init ? init.elapsedBase : 0;
+    var firstRun = useRef(true);
+    var errRef = useRef(errCount); errRef.current = errCount;
+    function elapsed() { return base + (Date.now() - startRef.current) / 1000; }
+
+    useEffect(function () {
+      var t = setInterval(function () { setTick(function (x) { return x + 1; }); }, 1000);
+      return function () { clearInterval(t); };
+    }, []);
+
+    useEffect(function () {
+      if (firstRun.current) { firstRun.current = false; return; }
+      var now = new Date();
+      setSavedAt(now);
+      props.onDraft({ values: values, elapsedBase: elapsed(), errorCount: errRef.current, savedAt: now });
+    }, [values]);
+
+    var errors = {};
+    FIELDS.forEach(function (f) { var m = validate(f, values[f.key]); if (m) errors[f.key] = m; });
+    var invalidKeys = Object.keys(errors);
+    var validCount = FIELDS.length - invalidKeys.length;
+    var shown = attempted ? errors : {};
+    var liveViolations = findViolations(values);
+
+    function setField(key, v) {
+      setFailMsg(null);
+      setValues(function (prev) { var n = {}; for (var k in prev) n[k] = prev[k]; n[key] = v; return n; });
+    }
+    function focusField(key) {
+      var el = document.getElementById('f-' + key);
+      if (el) { el.focus(); if (el.scrollIntoView) el.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
+    }
+    function leave() {
+      props.onDraft({ values: values, elapsedBase: elapsed(), errorCount: errRef.current, savedAt: savedAt || new Date() });
+      props.onBack();
+    }
+
+    function submit(e) {
+      if (e) e.preventDefault();
+      if (submitting) return;
+      setAttempted(true); setFailMsg(null);
+      if (invalidKeys.length) {
+        setErrCount(function (c) { return c + invalidKeys.length; });
+        setTimeout(function () { focusField(invalidKeys[0]); }, 30);
+        return;
+      }
+      setSubmitting(true);
+      var secs = elapsed();
+      setTimeout(function () {
+        if (failNext) {
+          setFailNext(false); setSubmitting(false);
+          setFailMsg('The checklist could not be saved. Your entries are still here. Select Submit to try again.');
+          return;
+        }
+        var counts = { prefilled: 0, edited: 0, entered: 0 };
+        FIELDS.forEach(function (f) {
+          var s = fieldStatus(f, values[f.key], orig[f.key], false).k;
+          if (s === 'prefilled') counts.prefilled++; else if (s === 'edited') counts.edited++; else counts.entered++;
+        });
+        var viol = findViolations(values);
+        props.onSubmitted({ id: rec.id, sec: secs, errors: errRef.current, counts: counts, values: values, at: new Date(), violations: viol, compliant: viol.length === 0 });
+      }, 900);
+    }
+
+    return h('form', { onSubmit: submit, noValidate: true },
+      h('div', { className: 'sticky' },
+        h('div', { className: 'statusbar' },
+          h('div', null,
+            h('button', { type: 'button', className: 'link', onClick: leave }, '← Back to dashboard'),
+            h('div', { style: { fontWeight: 600 } }, rec.routeName, ' ', h('span', { className: 'mono', style: { color: 'var(--muted)', fontWeight: 400 } }, rec.id))),
+          h('div', { className: 'progress' },
+            h('div', { className: 'hint', style: { marginTop: 0 } }, validCount + ' of ' + FIELDS.length + ' required fields complete'),
+            h('div', { className: 'bar', role: 'progressbar', 'aria-valuemin': 0, 'aria-valuemax': FIELDS.length, 'aria-valuenow': validCount },
+              h('div', { style: { width: (validCount / FIELDS.length * 100) + '%' } }))),
+          h('div', { style: { textAlign: 'right' } },
+            h('div', { className: 'timer', 'aria-label': 'Time on this check' }, fmtDur(elapsed())),
+            h('div', { className: 'saved' }, savedAt ? 'Draft saved ' + fmtClock(savedAt) : 'Autosaves as you edit')))),
+
+      h('div', { className: 'legend' },
+        h('span', { className: 'badge prefilled' }, 'Pre-filled'),
+        h('span', { className: 'badge edited' }, 'Edited or verify'),
+        h('span', { className: 'badge entered' }, 'Entered by you'),
+        h('span', { className: 'badge missing' }, 'Missing'),
+        h('span', null, 'Pre-filled values come from existing records. Change any that are wrong.')),
+
+      attempted && invalidKeys.length ? h('div', { className: 'banner bad', role: 'alert' },
+        h('strong', null, 'Submission blocked. ' + invalidKeys.length + (invalidKeys.length === 1 ? ' field needs' : ' fields need') + ' attention:'),
+        h('ul', null, invalidKeys.map(function (k) {
+          var f = FIELDS.filter(function (x) { return x.key === k; })[0];
+          return h('li', { key: k }, h('button', { type: 'button', className: 'link', style: { color: 'inherit' }, onClick: function () { focusField(k); } }, f.label), ': ' + errors[k]);
+        }))) : null,
+      liveViolations.length ? h('div', { className: 'banner flag', role: 'status' },
+        h('strong', null, 'Compliance flag (simulated rule): '),
+        liveViolations.join('; ') + '. You can still submit. The checklist will be saved and recorded as non-compliant. This is separate from validation errors.') : null,
+      failMsg ? h('div', { className: 'banner bad', role: 'alert' }, failMsg) : null,
+
+      h('fieldset', { className: 'grid', disabled: submitting },
+        h('legend', { style: { position: 'absolute', left: -9999 } }, 'Compliance checklist fields'),
+        FIELDS.map(function (f) {
+          var st = fieldStatus(f, values[f.key], orig[f.key], rec.uncertain.indexOf(f.key) >= 0);
+          return h(Field, { key: f.key, f: f, value: values[f.key], error: shown[f.key], status: st, onChange: function (v) { setField(f.key, v); } });
+        })),
+
+      h('div', { className: 'actions' },
+        h('label', { className: 'demo' },
+          h('input', { type: 'checkbox', id: 'demo-fail', checked: failNext, onChange: function (e) { setFailNext(e.target.checked); } }),
+          'Demo: make the next submit fail'),
+        h('button', { type: 'submit', className: 'btn primary', disabled: submitting }, submitting ? 'Submitting…' : liveViolations.length ? 'Submit (will be flagged non-compliant)' : 'Submit checklist')));
+  }
+
+  /* ---------- Screen 3: Confirmation ---------- */
+  function Confirmation(props) {
+    var r = props.result, rec = props.record;
+    var min = r.sec / 60;
+    return h('div', null,
+      h('div', { className: 'ok' },
+        h('div', { className: 'mark' + (r.compliant ? '' : ' bad'), 'aria-hidden': 'true' }, r.compliant ? '✓' : '!'),
+        h('div', null, h('h1', { style: { marginBottom: 0 } }, r.compliant ? 'Checklist submitted' : 'Checklist submitted, flagged non-compliant'),
+          h('div', { className: 'sub', style: { margin: 0 } }, rec.routeName + ' (' + rec.id + ') was saved at ' + fmtClock(r.at) + '.'))),
+      h('div', { className: 'panel' },
+        h('h2', null, 'Compliance result'),
+        h('span', { className: 'pill ' + (r.compliant ? 'good' : 'bad') }, r.compliant ? 'Compliant against simulated rules' : 'Non-compliant'),
+        r.compliant
+          ? h('p', { className: 'hint' }, 'No violations were found against the simulated rules. Submitting a checklist and its compliance result are recorded separately.')
+          : h('div', null,
+              h('ul', { style: { margin: '10px 0 0', paddingLeft: 18 } }, r.violations.map(function (v) { return h('li', { key: v }, v); })),
+              h('p', { className: 'hint' }, 'The checklist is saved, but it is not compliant until these items are resolved.')),
+        h('div', { className: 'hint' }, 'Simulated result for demonstration. This is not a regulatory determination.')),
+      h('div', { className: 'panel' },
+        h('div', { className: 'facts' },
+          h('div', { className: 'fact' }, h('div', { className: 'k' }, 'Completion time'), h('div', { className: 'v' }, fmtDur(r.sec))),
+          h('div', { className: 'fact' }, h('div', { className: 'k' }, 'Validation errors'), h('div', { className: 'v' }, String(r.errors))),
+          h('div', { className: 'fact' }, h('div', { className: 'k' }, 'Compliance violations'), h('div', { className: 'v' }, String(r.violations.length))),
+          h('div', { className: 'fact' }, h('div', { className: 'k' }, 'Pre-filled, kept'), h('div', { className: 'v' }, String(r.counts.prefilled))),
+          h('div', { className: 'fact' }, h('div', { className: 'k' }, 'Corrected'), h('div', { className: 'v' }, String(r.counts.edited))),
+          h('div', { className: 'fact' }, h('div', { className: 'k' }, 'Entered by hand'), h('div', { className: 'v' }, String(r.counts.entered)))),
+        h('div', { className: 'hint', style: { marginTop: 12 } }, 'Time on this check: ' + min.toFixed(1) + ' min against a target of ' + TARGET_MIN.toFixed(1) + ' min (simulated target). Completion time is recorded in the pilot log. Validation errors count entry problems fixed before submitting and are separate from compliance violations.')),
+      h('div', { className: 'panel' },
+        h('h2', null, 'Submitted values'),
+        h('dl', { className: 'sum' }, FIELDS.map(function (f) {
+          return [h('dt', { key: f.key + 't' }, f.label), h('dd', { key: f.key + 'd' }, prettyValue(f, r.values[f.key]))];
+        }))),
+      h('button', { className: 'btn primary', onClick: props.onDone }, 'Back to dashboard'));
+  }
+
+  /* ---------- App: exactly three screens ---------- */
+  function App() {
+    var _s = useState('dashboard'), screen = _s[0], setScreen = _s[1];
+    var _id = useState(null), activeId = _id[0], setActiveId = _id[1];
+    var _d = useState({}), drafts = _d[0], setDrafts = _d[1];
+    var _dn = useState({}), done = _dn[0], setDone = _dn[1];
+    var _l = useState(SEED_LOG), log = _l[0], setLog = _l[1];
+
+    useEffect(function () { window.scrollTo(0, 0); }, [screen]);
+
+    var rec = RECORDS.filter(function (r) { return r.id === activeId; })[0];
+
+    function open(id) { setActiveId(id); setScreen('checklist'); }
+    function saveDraft(d) { setDrafts(function (p) { var n = {}; for (var k in p) n[k] = p[k]; n[activeId] = d; return n; }); }
+    function submitted(res) {
+      setDone(function (p) { var n = {}; for (var k in p) n[k] = p[k]; n[res.id] = res; return n; });
+      setLog(function (p) { return p.concat([{ id: res.id, sec: res.sec, errors: res.errors, violations: res.violations.length, simulated: false }]); });
+      setDrafts(function (p) { var n = {}; for (var k in p) if (k !== res.id) n[k] = p[k]; return n; });
+      setScreen('confirmation');
+    }
+
+    var label = screen === 'dashboard' ? 'Prototype · simulated data · screen 1 of 3'
+      : screen === 'checklist' ? 'Prototype · simulated data · screen 2 of 3'
+      : 'Prototype · simulated data · screen 3 of 3';
+
+    var body;
+    if (screen === 'checklist' && rec) {
+      body = h(Checklist, { key: rec.id, record: rec, initial: drafts[rec.id], onDraft: saveDraft, onBack: function () { setScreen('dashboard'); }, onSubmitted: submitted });
+    } else if (screen === 'confirmation' && rec && done[rec.id]) {
+      body = h(Confirmation, { record: rec, result: done[rec.id], onDone: function () { setScreen('dashboard'); } });
+    } else {
+      body = h(Dashboard, { drafts: drafts, done: done, log: log, onOpen: open, onViewDone: function (id) { setActiveId(id); setScreen('confirmation'); } });
+    }
+    return h('div', { className: 'wrap' }, h(TopBar, { label: label }),
+      h('div', { className: 'simnote', role: 'note' }, 'Simulated demonstration data. All routes, drivers, vehicles, limits and compliance rules in this prototype are fictional and are not real regulatory requirements. Do not use any result for a real compliance decision.'),
+      body);
+  }
+
+  ReactDOM.createRoot(document.getElementById('root')).render(h(App));
+})();
+</script>
+
+</body></html>
